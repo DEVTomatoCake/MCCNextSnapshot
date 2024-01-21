@@ -5,17 +5,14 @@ async function loadBugs() {
 	let start = 0
 	let bugs = []
 	do {
-		console.log("Fetching " + start + "...")
+		console.log("Loading bugs: " + start + "...")
 		const res = await fetch(jiraURL + start)
 		const json = await res.json()
 		start += 1000
-		bugs = bugs.concat(json.issues.map(issue => ({
-			key: issue.key,
-			resolutiondate: issue.fields.resolutiondate
-		})))
+		bugs = bugs.concat(json.issues.map(issue => issue.fields.resolutiondate))
 	} while (bugs.length % 1000 == 0)
 
-	console.log(bugs.length)
+	console.log(bugs.length + " bugs loaded")
 	fsPromises.writeFile("./bugs.json", JSON.stringify(bugs))
 }
 loadBugs()

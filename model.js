@@ -1,7 +1,12 @@
-import csv from "csv-parser"
 import fs from "node:fs"
-import { NeuralNetwork } from "brain.js"
-import Brain from "brain.js"
+import csv from "csv-parser"
+import { NeuralNetwork, utilities } from "brain.js"
+
+const prepareData = (features, target) => {
+	const data = []
+	for (let i = 0; i < features.length; i++) data.push({input: features[i], output: target[i]})
+	return data
+}
 
 const results = []
 fs.createReadStream("mcVersions.csv")
@@ -19,27 +24,16 @@ fs.createReadStream("mcVersions.csv")
 			activation: "sigmoid"
 		})
 
-		function train(features, target) {
-			const data = []
-			for (let i = 0; i < features.length; i++) {
-				data.push({ input: features[i], output: target[i] })
-			}
-			return data
-		}
-
 		const highestSnapshots = Math.max(...results.map(item => parseInt(item["Snapshots in the last three weeks"])))
 		const highestYear = Math.max(...results.map(item => parseInt(item["Percent of year"])))
 		const highestSinceLast = Math.max(...results.map(item => parseInt(item["Hours since last snapshot"])))
 		const highestBugfixes = Math.max(...results.map(item => parseInt(item["Bugs fixed"])))
 		const highestDay = Math.max(...results.map(item => parseInt(item["Day of week"])))
-		console.log("Max-Konstanten: " + highestSnapshots + ", " + highestYear + ", " + highestSinceLast + ", " + highestBugfixes + ", " + highestDay)
-
 		const lowestSnapshots = Math.min(...results.map(item => parseInt(item["Snapshots in the last three weeks"])))
 		const lowestYear = Math.min(...results.map(item => parseInt(item["Percent of year"])))
 		const lowestSinceLast = Math.min(...results.map(item => parseInt(item["Hours since last snapshot"])))
 		const lowestBugfixes = Math.min(...results.map(item => parseInt(item["Bugs fixed"])))
 		const lowestDay = Math.min(...results.map(item => parseInt(item["Day of week"])))
-		console.log("Min-Konstanten: " + lowestSnapshots + ", " + lowestYear + ", " + lowestSinceLast + ", " + lowestBugfixes + ", " + lowestDay)
 
 		const normalize = item => ([
 			(parseInt(item["Snapshots in the last three weeks"]) - lowestSnapshots) / (highestSnapshots - lowestSnapshots),
@@ -49,16 +43,16 @@ fs.createReadStream("mcVersions.csv")
 			(parseInt(item["Day of week"]) - lowestDay) / (highestDay - lowestDay)
 		])
 
-		net.train(train(trainSet.map(normalize), trainSet.map(item => [item.Name == "-1000" ? 0 : 1])), {
+		net.train(prepareData(trainSet.map(normalize), trainSet.map(item => [item.Name == "-1000" ? 0 : 1])), {
 			log: true,
 			logPeriod: 1000,
-			timeout: 1000 * 60 * 3,
-			iterations: 30000,
+			timeout: 1000 * 60 * 2,
+			iterations: 35000,
 			errorThresh: 0.008,
 			learningRate: 0.35
 		})
 
-		const stats = net.test(train(testSet.map(normalize), testSet.map(item => [item.Name == "-1000" ? 0 : 1])))
+		const stats = net.test(prepareData(testSet.map(normalize), testSet.map(item => [item.Name == "-1000" ? 0 : 1])))
 		console.log(stats)
 
 		const date = new Date()
@@ -73,7 +67,7 @@ fs.createReadStream("mcVersions.csv")
 
 		fs.writeFileSync("./web/modelFunction.js",
 			net.toFunction().toString() +
-			"\n\n" +
+			"\n" +
 			"\nconst highestSnapshots = " + highestSnapshots +
 			"\nconst highestYear = " + highestYear +
 			"\nconst highestSinceLast = " + highestSinceLast +
@@ -84,9 +78,9 @@ fs.createReadStream("mcVersions.csv")
 			"\nconst lowestSinceLast = " + lowestSinceLast +
 			"\nconst lowestBugfixes = " + lowestBugfixes +
 			"\nconst lowestDay = " + lowestDay +
-			"\nconst normalize = " + normalize.toString()
+			"\n\nconst normalize = " + normalize.toString()
 		)
 
-		const svg = Brain.utilities.toSVG(net)
+		const svg = utilities.toSVG(net)
 		fs.writeFileSync("./web/model.svg", svg)
 	})

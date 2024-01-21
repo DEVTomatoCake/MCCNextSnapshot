@@ -1,16 +1,6 @@
 const fs = require("node:fs")
 const fsPromises = require("node:fs").promises
 
-/*
-how many snapshots in a row: amount of snapshots in the last 3 weeks
-the time of year: percent of year
-how long without a snapshot: hours since last snapshot
-current day of week: number from 1-7 monday-sunday
-how many bugs fixed on mojira: bugs fixed in last 24 hours
-
-how many messages boq has sent
-*/
-
 async function main() {
 	let versions = {}
 	if (fs.existsSync("./mcVersions.json")) versions = require("./mcVersions.json")
@@ -44,7 +34,7 @@ async function main() {
 		const hoursSince = ((time - nextTime) / (1000 * 60 * 60)).toFixed(4)
 
 		const currentISO = time.toISOString()
-		const bugsFixed = bugs.filter(bug => currentISO.substring(0, 10) == bug.resolutiondate.substring(0, 10)).length
+		const bugsFixed = bugs.filter(bug => currentISO.substring(0, 10) == bug.substring(0, 10)).length
 
 		csv += ver.id + "," + ver.type + "," + currentISO + "," + inRow + "," + timePercent + "," + hoursSince + "," + bugsFixed + "," + (time.getDay() == 0 ? 7 : time.getDay()) + "\n"
 
@@ -64,7 +54,7 @@ async function main() {
 			const percent = (Math.abs(fakeTime - startFake) / Math.abs(endFake - startFake) * 100).toFixed(4)
 
 			const hoursSinceFake = ((fakeTime - nextTime) / (1000 * 60 * 60)).toFixed(4)
-			const bugsFixedFake = bugs.filter(bug => fakeTime.toISOString().substring(0, 10) == bug.resolutiondate.substring(0, 10)).length
+			const bugsFixedFake = bugs.filter(bug => fakeTime.toISOString().substring(0, 10) == bug.substring(0, 10)).length
 
 			csv += "-1000,-1000," + fakeTime.toISOString() + "," + inRowFake + "," + percent + "," + hoursSinceFake + "," + bugsFixedFake + "," + (fakeTime.getDay() == 0 ? 7 : fakeTime.getDay()) + "\n"
 		}

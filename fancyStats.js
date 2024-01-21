@@ -23,7 +23,7 @@ async function main() {
 		const hoursSince = Math.round((time - nextTime) / (1000 * 60 * 60))
 
 		const currentISO = time.toISOString()
-		const bugsFixed = bugs.filter(bug => currentISO.substring(0, 10) == bug.resolutiondate.substring(0, 10)).length
+		const bugsFixed = bugs.filter(bug => currentISO.substring(0, 10) == bug.substring(0, 10)).length
 
 		csv += ver.id + "," + ver.type + "," + currentISO + "," + inRow + "," + timePercent + "," + hoursSince + "," + bugsFixed + "," + (time.getDay() == 0 ? 7 : time.getDay()) + "\n"
 
@@ -43,7 +43,7 @@ async function main() {
 			const percent = Math.round(Math.abs(fakeTime - startFake) / Math.abs(endFake - startFake) * 100)
 
 			const hoursSinceFake = Math.round((fakeTime - nextTime) / (1000 * 60 * 60))
-			const bugsFixedFake = bugs.filter(bug => fakeTime.toISOString().substring(0, 10) == bug.resolutiondate.substring(0, 10)).length
+			const bugsFixedFake = bugs.filter(bug => fakeTime.toISOString().substring(0, 10) == bug.substring(0, 10)).length
 
 			csv += ",," + fakeTime.toISOString() + "," + inRowFake + "," + percent + "," + hoursSinceFake + "," + bugsFixedFake + "," + (fakeTime.getDay() == 0 ? 7 : fakeTime.getDay()) + "\n"
 		}

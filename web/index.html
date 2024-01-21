@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Minecraft Version Predictor</title>
+
+		<link rel="stylesheet" href="./style.css">
+
+		<script src="./modelFunction.js"></script>
+		<script>
+			function predict() {
+				const snapshots = document.getElementById("snapshots").value
+				const percentYear = document.getElementById("percentYear").value
+				const hoursSinceSnapshot = document.getElementById("hoursSinceSnapshot").value
+				const bugsFixed = document.getElementById("bugsFixed").value
+				const dayOfWeek = document.getElementById("dayOfWeek").value
+
+				console.log(normalize({
+					"Snapshots in the last three weeks": snapshots,
+					"Percent of year": percentYear,
+					"Hours since last snapshot": hoursSinceSnapshot,
+					"Bugs fixed": bugsFixed,
+					"Day of week": dayOfWeek
+				}))
+				const result = anonymous(normalize({
+					"Snapshots in the last three weeks": snapshots,
+					"Percent of year": percentYear,
+					"Hours since last snapshot": hoursSinceSnapshot,
+					"Bugs fixed": bugsFixed,
+					"Day of week": dayOfWeek
+				}))
+				document.getElementById("prediction").innerText = "Prediction: " + (result[0] * 100).toFixed(2) + "%"
+			}
+		</script>
+	</head>
+	<body>
+		<h1>Minecraft Version Predictor</h1>
+
+		<label for="snapshots">Amount of releases in the last three weeks:</label><br>
+		<input type="number" id="snapshots" name="snapshots" value="0" min="0" max="100" oninput="predict()"><br>
+
+		<label for="percentYear">Percent of year:</label><br>
+		<input type="number" id="percentYear" name="percentYear" value="0" min="0" max="100" oninput="predict()"><br>
+
+		<label for="hoursSinceSnapshot">Hours since last snapshot:</label><br>
+		<input type="number" id="hoursSinceSnapshot" name="hoursSinceSnapshot" value="1" min="1" max="2500" oninput="predict()"><br>
+
+		<label for="bugsFixed">Bugs fixed within the last 24 hours, or since the last snapshot, whatever is less:</label><br>
+		<input type="number" id="bugsFixed" name="bugsFixed" value="0" oninput="predict()"><br>
+
+		<label for="dayOfWeek">Day of week (Mon-Sun -> 1-7):</label><br>
+		<input type="number" id="dayOfWeek" name="dayOfWeek" value="1" min="1" max="7" oninput="predict()"><br><br>
+
+		<p id="prediction">Adjust the inputs to get a prediction!</p>
+
+		<h2>Model neurons</h2>
+		<img src="./model.svg">
+	</body>
+</html>

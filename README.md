@@ -6,7 +6,7 @@ Some ML stuff to return a prediction of how likely a new Minecraft release is ha
 
 Parameters:
 - Mmount of snapshots in the last 3 weeks
-- How many days of the year passed as a percentage
+- How many days of the year passed
 - Hours since the last Minecraft version was released
 - Current day of week, a number from 1-7 for Monday-Sunday
 - How many bugs have been marked as fixed on [Mojira](https://bugs.mojang.com) in the last 24 hours

@@ -1,10 +1,18 @@
 function anonymous(input
 ) {
-return [1/(1+1/Math.exp((1.7009388208389282-2.6685314178466797*1/(1+1/Math.exp((-56.605472564697266+60.3378791809082*(input[0]||0)+2.6107497215270996*(input[1]||0)-48.47526550292969*(input[2]||0)-2.5858447551727295*(input[3]||0)+99.85395050048828*(input[4]||0))))-13.762237548828125*1/(1+1/Math.exp((-1.8862429857254028-5.189235210418701*(input[0]||0)+0.15065522491931915*(input[1]||0)+7.278409957885742*(input[2]||0)-32.8648567199707*(input[3]||0)+3.7333521842956543*(input[4]||0))))-3.4094860553741455*1/(1+1/Math.exp((25.478452682495117-23.283098220825195*(input[0]||0)+1.5322238206863403*(input[1]||0)-2.761798143386841*(input[2]||0)-4.729151248931885*(input[3]||0)-72.89361572265625*(input[4]||0)))))))];
+return [1/(1+1/Math.exp((1.6512693166732788-3.2236616611480713*1/(1+1/Math.exp((23.634946823120117-8.69914436340332*(input[0]||0)-2.661404848098755*(input[1]||0)+9.602523803710938*(input[2]||0)+14.443702697753906*(input[3]||0)-114.75244140625*(input[4]||0))))-2.369969606399536*1/(1+1/Math.exp((-37.82270812988281+27.400861740112305*(input[0]||0)-4.041675567626953*(input[1]||0)-18.536548614501953*(input[2]||0)-1.2932384014129639*(input[3]||0)+72.52957916259766*(input[4]||0))))-4.309596061706543*1/(1+1/Math.exp((-0.4441545307636261-2.8768162727355957*(input[0]||0)+1.1596496105194092*(input[1]||0)+9.277094841003418*(input[2]||0)-41.907264709472656*(input[3]||0)+2.2884681224823*(input[4]||0)))))))];
 }
 
+const lastBuild = 1705898063831
+
+const defaultSnapshots = 18
+const defaultYear = 8030
+const defaultSinceLast = 88
+const defaultBugfixes = 0
+const defaultDay = 1
+
 const highestSnapshots = 13
-const highestYear = 99
+const highestYear = 364
 const highestSinceLast = 1797
 const highestBugfixes = 58
 const highestDay = 7
@@ -16,7 +24,7 @@ const lowestDay = 1
 
 const normalize = item => ([
 			(parseInt(item["Snapshots in the last three weeks"]) - lowestSnapshots) / (highestSnapshots - lowestSnapshots),
-			(parseInt(item["Percent of year"]) - lowestYear) / (highestYear - lowestYear),
+			(parseInt(item["Days of year"]) - lowestYear) / (highestYear - lowestYear),
 			(parseInt(item["Hours since last snapshot"]) - lowestSinceLast) / (highestSinceLast - lowestSinceLast),
 			(parseInt(item["Bugs fixed"]) - lowestBugfixes) / (highestBugfixes - lowestBugfixes),
 			(parseInt(item["Day of week"]) - lowestDay) / (highestDay - lowestDay)

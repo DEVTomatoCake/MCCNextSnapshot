@@ -9,7 +9,7 @@ async function loadBugs() {
 		const res = await fetch(jiraURL + start)
 		const json = await res.json()
 		start += 1000
-		bugs = bugs.concat(json.issues.map(issue => issue.fields.resolutiondate))
+		bugs = bugs.concat(json.issues.map(issue => issue.fields.resolutiondate.substring(0, 10)))
 	} while (bugs.length % 1000 == 0)
 
 	console.log(bugs.length + " bugs loaded")

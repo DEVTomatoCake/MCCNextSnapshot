@@ -8,6 +8,9 @@ const prepareData = (features, target) => {
 	return data
 }
 
+import mcVersions from "./mcVersions.json" assert { type: "json" }
+import bugs from "./bugs.json" assert { type: "json" }
+
 const results = []
 fs.createReadStream("mcVersions.csv")
 	.pipe(csv())
@@ -25,19 +28,19 @@ fs.createReadStream("mcVersions.csv")
 		})
 
 		const highestSnapshots = Math.max(...results.map(item => parseInt(item["Snapshots in the last three weeks"])))
-		const highestYear = Math.max(...results.map(item => parseInt(item["Percent of year"])))
+		const highestYear = Math.max(...results.map(item => parseInt(item["Days of year"])))
 		const highestSinceLast = Math.max(...results.map(item => parseInt(item["Hours since last snapshot"])))
 		const highestBugfixes = Math.max(...results.map(item => parseInt(item["Bugs fixed"])))
 		const highestDay = Math.max(...results.map(item => parseInt(item["Day of week"])))
 		const lowestSnapshots = Math.min(...results.map(item => parseInt(item["Snapshots in the last three weeks"])))
-		const lowestYear = Math.min(...results.map(item => parseInt(item["Percent of year"])))
+		const lowestYear = Math.min(...results.map(item => parseInt(item["Days of year"])))
 		const lowestSinceLast = Math.min(...results.map(item => parseInt(item["Hours since last snapshot"])))
 		const lowestBugfixes = Math.min(...results.map(item => parseInt(item["Bugs fixed"])))
 		const lowestDay = Math.min(...results.map(item => parseInt(item["Day of week"])))
 
 		const normalize = item => ([
 			(parseInt(item["Snapshots in the last three weeks"]) - lowestSnapshots) / (highestSnapshots - lowestSnapshots),
-			(parseInt(item["Percent of year"]) - lowestYear) / (highestYear - lowestYear),
+			(parseInt(item["Days of year"]) - lowestYear) / (highestYear - lowestYear),
 			(parseInt(item["Hours since last snapshot"]) - lowestSinceLast) / (highestSinceLast - lowestSinceLast),
 			(parseInt(item["Bugs fixed"]) - lowestBugfixes) / (highestBugfixes - lowestBugfixes),
 			(parseInt(item["Day of week"]) - lowestDay) / (highestDay - lowestDay)
@@ -55,18 +58,31 @@ fs.createReadStream("mcVersions.csv")
 		const stats = net.test(prepareData(testSet.map(normalize), testSet.map(item => [item.Name == "-1000" ? 0 : 1])))
 		console.log(stats)
 
+		const lastThreeWeeks = results.filter(item => new Date(item.Date).getTime() > Date.now() - 1000 * 60 * 60 * 24 * 7 * 3).length
 		const date = new Date()
-		const prediction = net.run(normalize({
-			"Snapshots in the last three weeks": "1",
-			"Percent of year": (date.getMonth() * 30 + date.getDate()) / 365 * 100,
-			"Hours since last snapshot": 24 * 3,
-			"Bugs fixed": "4",
+		const currentISO = date.toISOString().substring(0, 10)
+		const bugsFixed = bugs.filter(bug => currentISO == bug).length
+
+		const defaultValues = {
+			"Snapshots in the last three weeks": lastThreeWeeks,
+			"Days of year": (date.getMonth() * 30 + date.getDate()) * 365,
+			"Hours since last snapshot": Math.abs(Math.round((new Date(mcVersions[0].releaseTime).getTime() - Date.now()) / 1000 / 60 / 60)),
+			"Bugs fixed": bugsFixed,
 			"Day of week": date.getDay() == 0 ? 7 : date.getDay()
-		}))
+		}
+		const prediction = net.run(normalize(defaultValues))
 		console.log(prediction)
 
 		fs.writeFileSync("./web/modelFunction.js",
 			net.toFunction().toString() +
+			"\n" +
+			"\nconst lastBuild = " + Date.now() +
+			"\n" +
+			"\nconst defaultSnapshots = " + defaultValues["Snapshots in the last three weeks"] +
+			"\nconst defaultYear = " + defaultValues["Days of year"] +
+			"\nconst defaultSinceLast = " + defaultValues["Hours since last snapshot"] +
+			"\nconst defaultBugfixes = " + defaultValues["Bugs fixed"] +
+			"\nconst defaultDay = " + defaultValues["Day of week"] +
 			"\n" +
 			"\nconst highestSnapshots = " + highestSnapshots +
 			"\nconst highestYear = " + highestYear +

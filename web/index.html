@@ -2,7 +2,10 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 		<title>Minecraft Version Predictor</title>
+		<meta name="description" content="Minecraft Version Predictor">
 
 		<link rel="stylesheet" href="./style.css">
 
@@ -10,50 +13,66 @@
 		<script>
 			function predict() {
 				const snapshots = document.getElementById("snapshots").value
-				const percentYear = document.getElementById("percentYear").value
+				const daysYear = document.getElementById("daysYear").value
 				const hoursSinceSnapshot = document.getElementById("hoursSinceSnapshot").value
 				const bugsFixed = document.getElementById("bugsFixed").value
 				const dayOfWeek = document.getElementById("dayOfWeek").value
 
-				console.log(normalize({
-					"Snapshots in the last three weeks": snapshots,
-					"Percent of year": percentYear,
-					"Hours since last snapshot": hoursSinceSnapshot,
-					"Bugs fixed": bugsFixed,
-					"Day of week": dayOfWeek
-				}))
 				const result = anonymous(normalize({
 					"Snapshots in the last three weeks": snapshots,
-					"Percent of year": percentYear,
+					"Days of year": daysYear,
 					"Hours since last snapshot": hoursSinceSnapshot,
 					"Bugs fixed": bugsFixed,
 					"Day of week": dayOfWeek
 				}))
 				document.getElementById("prediction").innerText = "Prediction: " + (result[0] * 100).toFixed(2) + "%"
 			}
+
+			function load() {
+				document.getElementById("snapshots").value = defaultSnapshots
+				document.getElementById("daysYear").value = defaultYear
+				document.getElementById("hoursSinceSnapshot").value = defaultSinceLast
+				document.getElementById("bugsFixed").value = defaultBugfixes
+				document.getElementById("dayOfWeek").value = defaultDay
+
+				document.getElementById("last-build").innerText = "Default values & model last build: " + new Date(lastBuild).toLocaleString()
+				predict()
+			}
 		</script>
 	</head>
-	<body>
+	<body onload="load()">
 		<h1>Minecraft Version Predictor</h1>
+		<p id="last-build"></p>
 
-		<label for="snapshots">Amount of releases in the last three weeks:</label><br>
-		<input type="number" id="snapshots" name="snapshots" value="0" min="0" max="100" oninput="predict()"><br>
+		<label for="snapshots">Amount of releases in the last three weeks:</label>
+		<br>
+		<input type="number" id="snapshots" value="0" min="0" max="100" oninput="predict()">
+		<br>
 
-		<label for="percentYear">Percent of year:</label><br>
-		<input type="number" id="percentYear" name="percentYear" value="0" min="0" max="100" oninput="predict()"><br>
+		<label for="daysYear">Days of year:</label>
+		<br>
+		<input type="number" id="daysYear" value="0" min="0" max="365" oninput="predict()">
+		<br>
 
-		<label for="hoursSinceSnapshot">Hours since last snapshot:</label><br>
-		<input type="number" id="hoursSinceSnapshot" name="hoursSinceSnapshot" value="1" min="1" max="2500" oninput="predict()"><br>
+		<label for="hoursSinceSnapshot">Hours since last snapshot:</label>
+		<br>
+		<input type="number" id="hoursSinceSnapshot" value="1" min="1" max="2500" oninput="predict()">
+		<br>
 
-		<label for="bugsFixed">Bugs fixed within the last 24 hours, or since the last snapshot, whatever is less:</label><br>
-		<input type="number" id="bugsFixed" name="bugsFixed" value="0" oninput="predict()"><br>
+		<label for="bugsFixed">Bugs marked as fixed within the last 24 hours:</label>
+		<br>
+		<input type="number" id="bugsFixed" value="0" oninput="predict()">
+		<br>
 
-		<label for="dayOfWeek">Day of week (Mon-Sun -> 1-7):</label><br>
-		<input type="number" id="dayOfWeek" name="dayOfWeek" value="1" min="1" max="7" oninput="predict()"><br><br>
+		<label for="dayOfWeek">Day of week (Mon-Sun -> 1-7):</label>
+		<br>
+		<input type="number" id="dayOfWeek" value="1" min="1" max="7" oninput="predict()">
+		<br>
+		<br>
 
-		<p id="prediction">Adjust the inputs to get a prediction!</p>
+		<p id="prediction"></p>
 
 		<h2>Model neurons</h2>
-		<img src="./model.svg">
+		<img src="./model.svg" alt="Generated image of how the models layers are connected">
 	</body>
 </html>

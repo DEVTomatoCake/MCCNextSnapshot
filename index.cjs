@@ -1,7 +1,7 @@
 const fs = require("node:fs")
 const fsPromises = require("node:fs").promises
 
-async function main() {
+async function generate() {
 	let versions = {}
 	if (fs.existsSync("./mcVersions.json")) versions = require("./mcVersions.json")
 	else {
@@ -9,13 +9,14 @@ async function main() {
 		const json = await res.json()
 		versions = json.versions
 		fsPromises.writeFile("./mcVersions.json", JSON.stringify(versions))
+		console.log("Downloaded Minecraft version manifest")
 	}
 
 	const filterDate = Date.now() - 1000 * 60 * 60 * 24 * 365 * 4
 	versions = versions.filter(ver => new Date(ver.releaseTime).getTime() > filterDate)
 	const bugs = require("./bugs.json")
 
-	let csv = "Name,Type,Date,Snapshots in the last three weeks,Percent of year,Hours since last snapshot,Bugs fixed,Day of week\n"
+	let csv = "Name,Type,Date,Snapshots in the last three weeks,Days of year,Hours since last snapshot,Bugs fixed,Day of week\n"
 	versions.forEach((ver, i) => {
 		if (!versions[i + 1]) return
 		const time = new Date(ver.releaseTime)
@@ -28,15 +29,15 @@ async function main() {
 
 		const start = new Date(time.getFullYear(), 0, 1)
 		const end = new Date(time.getFullYear() + 1, 0, 1)
-		const timePercent = (Math.abs(time - start) / Math.abs(end - start) * 100).toFixed(4)
+		const yearProgress = (Math.abs(time - start) / Math.abs(end - start) * 365).toFixed(4)
 
 		const nextTime = new Date(versions[i + 1].releaseTime)
-		const hoursSince = ((time - nextTime) / (1000 * 60 * 60)).toFixed(4)
+		const hoursSince = ((time - nextTime) / 1000 / 60 / 60).toFixed(4)
 
 		const currentISO = time.toISOString()
-		const bugsFixed = bugs.filter(bug => currentISO.substring(0, 10) == bug.substring(0, 10)).length
+		const bugsFixed = bugs.filter(bug => currentISO.substring(0, 10) == bug).length
 
-		csv += ver.id + "," + ver.type + "," + currentISO + "," + inRow + "," + timePercent + "," + hoursSince + "," + bugsFixed + "," + (time.getDay() == 0 ? 7 : time.getDay()) + "\n"
+		csv += ver.id + "," + ver.type + "," + currentISO + "," + inRow + "," + yearProgress + "," + hoursSince + "," + bugsFixed + "," + (time.getDay() == 0 ? 7 : time.getDay()) + "\n"
 
 		const nextTimeZero = new Date(nextTime.getFullYear(), nextTime.getMonth(), nextTime.getDate()).getTime()
 		const nextISO = nextTime.toISOString()
@@ -51,15 +52,15 @@ async function main() {
 
 			const startFake = new Date(fakeTime.getFullYear(), 0, 1)
 			const endFake = new Date(fakeTime.getFullYear() + 1, 0, 1)
-			const percent = (Math.abs(fakeTime - startFake) / Math.abs(endFake - startFake) * 100).toFixed(4)
+			const yearProgressFake = (Math.abs(fakeTime - startFake) / Math.abs(endFake - startFake) * 365).toFixed(4)
 
 			const hoursSinceFake = ((fakeTime - nextTime) / (1000 * 60 * 60)).toFixed(4)
-			const bugsFixedFake = bugs.filter(bug => fakeTime.toISOString().substring(0, 10) == bug.substring(0, 10)).length
+			const bugsFixedFake = bugs.filter(bug => fakeTime.toISOString().substring(0, 10) == bug).length
 
-			csv += "-1000,-1000," + fakeTime.toISOString() + "," + inRowFake + "," + percent + "," + hoursSinceFake + "," + bugsFixedFake + "," + (fakeTime.getDay() == 0 ? 7 : fakeTime.getDay()) + "\n"
+			csv += "-1000,-1000," + fakeTime.toISOString() + "," + inRowFake + "," + yearProgressFake + "," + hoursSinceFake + "," + bugsFixedFake + "," + (fakeTime.getDay() == 0 ? 7 : fakeTime.getDay()) + "\n"
 		}
 	})
 
 	fsPromises.writeFile("./mcVersions.csv", csv)
 }
-main()
+generate()

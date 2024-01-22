@@ -3,6 +3,9 @@
 		"browser": true,
 		"es2022": true
 	},
+	"parserOptions": {
+		"sourceType": "module"
+	},
 	"plugins": ["html", "@html-eslint", "unicorn", "sonarjs"],
 	"overrides": [
 		{
@@ -14,6 +17,7 @@
 			}
 		}
 	],
+	"ignorePatterns": ["web/modelFunction.js", "model.js"],
 	"settings": {
 		"html/html-extensions": [".html"]
 	},

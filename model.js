@@ -58,14 +58,14 @@ fs.createReadStream("mcVersions.csv")
 		const stats = net.test(prepareData(testSet.map(normalize), testSet.map(item => [item.Name == "-1000" ? 0 : 1])))
 		console.log(stats)
 
-		const lastThreeWeeks = results.filter(item => new Date(item.Date).getTime() > Date.now() - 1000 * 60 * 60 * 24 * 7 * 3).length
+		const lastThreeWeeks = results.filter(item => item.Name != "-1000" && new Date(item.Date).getTime() > Date.now() - 1000 * 60 * 60 * 24 * 7 * 3).length
 		const date = new Date()
 		const currentISO = date.toISOString().substring(0, 10)
 		const bugsFixed = bugs.filter(bug => currentISO == bug).length
 
 		const defaultValues = {
 			"Snapshots in the last three weeks": lastThreeWeeks,
-			"Days of year": (date.getMonth() * 30 + date.getDate()) * 365,
+			"Days of year": (date.getMonth() * 30 + date.getDate()),
 			"Hours since last snapshot": Math.abs(Math.round((new Date(mcVersions[0].releaseTime).getTime() - Date.now()) / 1000 / 60 / 60)),
 			"Bugs fixed": bugsFixed,
 			"Day of week": date.getDay() == 0 ? 7 : date.getDay()

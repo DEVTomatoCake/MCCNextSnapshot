@@ -61,13 +61,12 @@ fs.createReadStream("mcVersions.csv")
 		const lastThreeWeeks = results.filter(item => item.Name != "-1000" && new Date(item.Date).getTime() > Date.now() - 1000 * 60 * 60 * 24 * 7 * 3).length
 		const date = new Date()
 		const currentISO = date.toISOString().substring(0, 10)
-		const bugsFixed = bugs.filter(bug => currentISO == bug).length
 
 		const defaultValues = {
 			"Snapshots in the last three weeks": lastThreeWeeks,
-			"Days of year": (date.getMonth() * 30 + date.getDate()),
+			"Days of year": date.getMonth() * 30 + date.getDate(),
 			"Hours since last snapshot": Math.abs(Math.round((new Date(mcVersions[0].releaseTime).getTime() - Date.now()) / 1000 / 60 / 60)),
-			"Bugs fixed": bugsFixed,
+			"Bugs fixed": bugs.filter(bug => currentISO == bug).length,
 			"Day of week": date.getDay() == 0 ? 7 : date.getDay()
 		}
 		const prediction = net.run(normalize(defaultValues))

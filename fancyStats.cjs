@@ -1,9 +1,9 @@
 const fsPromises = require("node:fs").promises
 
-async function main() {
-	let versions = require("./mcVersions.json")
-	const bugs = require("./bugs.json")
+const versions = require("./mcVersions.json")
+const bugs = require("./bugs.json")
 
+async function main() {
 	let csv = "Name,Type,Date,Snapshots in the last three weeks,Days of year,Hours since last snapshot,Bugs fixed,Day of week\n"
 	versions.forEach((ver, i) => {
 		if (!versions[i + 1]) return
@@ -29,7 +29,11 @@ async function main() {
 
 		const nextTimeZero = new Date(nextTime.getFullYear(), nextTime.getMonth(), nextTime.getDate()).getTime()
 		const nextISO = nextTime.toISOString()
-		for (let k = new Date(time.getFullYear(), time.getMonth(), time.getDate() - 1, 16).getTime(); k > nextTimeZero && new Date(k).toISOString().substring(0, 10) != nextISO.substring(0, 10); k -= 1000 * 60 * 60 * 24) {
+		for (
+			let k = new Date(time.getFullYear(), time.getMonth(), time.getDate() - 1, 16).getTime();
+			k > nextTimeZero && new Date(k).toISOString().substring(0, 10) != nextISO.substring(0, 10);
+			k -= 1000 * 60 * 60 * 24
+		) {
 			const fakeTime = new Date(k)
 
 			let inRowFake = 0

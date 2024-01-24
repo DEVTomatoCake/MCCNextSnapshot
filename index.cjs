@@ -7,7 +7,11 @@ async function generate() {
 	else {
 		const res = await fetch("https://piston-meta.mojang.com/mc/game/version_manifest_v2.json")
 		const json = await res.json()
-		versions = json.versions
+		versions = json.versions.map(ver => ({
+			id: ver.id,
+			type: ver.type,
+			releaseTime: ver.releaseTime
+		}))
 		fsPromises.writeFile("./mcVersions.json", JSON.stringify(versions))
 		console.log("Downloaded Minecraft version manifest")
 	}

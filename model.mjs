@@ -70,7 +70,7 @@ fs.createReadStream("mcVersions.csv")
 			"Day of week": date.getDay() == 0 ? 7 : date.getDay()
 		}
 		const prediction = net.run(normalize(defaultValues))
-		console.log(prediction)
+		console.log("Current prediction for today: " + (prediction[0] * 100).toFixed(2) + "%")
 
 		fs.writeFileSync("./web/modelFunction.js",
 			net.toFunction().toString() +

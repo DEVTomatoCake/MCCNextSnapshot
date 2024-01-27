@@ -28,19 +28,19 @@ fs.createReadStream("mcVersions.csv")
 		})
 
 		const highestSnapshots = Math.max(...results.map(item => parseInt(item["Snapshots in the last three weeks"])))
-		const highestYear = Math.max(...results.map(item => parseInt(item["Days of year"])))
+		const highestYear = Math.max(...results.map(item => parseInt(item["Day of year"])))
 		const highestSinceLast = Math.max(...results.map(item => parseInt(item["Hours since last snapshot"])))
 		const highestBugfixes = Math.max(...results.map(item => parseInt(item["Bugs fixed"])))
 		const highestDay = Math.max(...results.map(item => parseInt(item["Day of week"])))
 		const lowestSnapshots = Math.min(...results.map(item => parseInt(item["Snapshots in the last three weeks"])))
-		const lowestYear = Math.min(...results.map(item => parseInt(item["Days of year"])))
+		const lowestYear = Math.min(...results.map(item => parseInt(item["Day of year"])))
 		const lowestSinceLast = Math.min(...results.map(item => parseInt(item["Hours since last snapshot"])))
 		const lowestBugfixes = Math.min(...results.map(item => parseInt(item["Bugs fixed"])))
 		const lowestDay = Math.min(...results.map(item => parseInt(item["Day of week"])))
 
 		const normalize = item => ([
 			(parseInt(item["Snapshots in the last three weeks"]) - lowestSnapshots) / (highestSnapshots - lowestSnapshots),
-			(parseInt(item["Days of year"]) - lowestYear) / (highestYear - lowestYear),
+			(parseInt(item["Day of year"]) - lowestYear) / (highestYear - lowestYear),
 			(parseInt(item["Hours since last snapshot"]) - lowestSinceLast) / (highestSinceLast - lowestSinceLast),
 			(parseInt(item["Bugs fixed"]) - lowestBugfixes) / (highestBugfixes - lowestBugfixes),
 			(parseInt(item["Day of week"]) - lowestDay) / (highestDay - lowestDay)
@@ -64,7 +64,7 @@ fs.createReadStream("mcVersions.csv")
 
 		const defaultValues = {
 			"Snapshots in the last three weeks": lastThreeWeeks,
-			"Days of year": date.getMonth() * 30 + date.getDate(),
+			"Day of year": date.getMonth() * 30 + date.getDate(),
 			"Hours since last snapshot": Math.abs(Math.round((new Date(mcVersions[0].releaseTime).getTime() - Date.now()) / 1000 / 60 / 60)),
 			"Bugs fixed": bugs.filter(bug => currentISO == bug).length,
 			"Day of week": date.getDay() == 0 ? 7 : date.getDay()
@@ -78,7 +78,7 @@ fs.createReadStream("mcVersions.csv")
 			"\nconst lastBuild = " + Date.now() +
 			"\n" +
 			"\nconst defaultSnapshots = " + defaultValues["Snapshots in the last three weeks"] +
-			"\nconst defaultYear = " + defaultValues["Days of year"] +
+			"\nconst defaultYear = " + defaultValues["Day of year"] +
 			"\nconst defaultSinceLast = " + defaultValues["Hours since last snapshot"] +
 			"\nconst defaultBugfixes = " + defaultValues["Bugs fixed"] +
 			"\nconst defaultDay = " + defaultValues["Day of week"] +

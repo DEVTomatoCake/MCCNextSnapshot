@@ -20,7 +20,7 @@
 
 				const result = anonymous(normalize({
 					"Snapshots in the last three weeks": snapshots,
-					"Days of year": daysYear,
+					"Day of year": daysYear,
 					"Hours since last snapshot": hoursSinceSnapshot,
 					"Bugs fixed": bugsFixed,
 					"Day of week": dayOfWeek
@@ -49,7 +49,7 @@
 		<input type="number" id="snapshots" value="0" min="0" max="100" oninput="predict()">
 		<br>
 
-		<label for="daysYear">Days of year:</label>
+		<label for="daysYear">Day of year:</label>
 		<br>
 		<input type="number" id="daysYear" value="0" min="0" max="365" oninput="predict()">
 		<br>

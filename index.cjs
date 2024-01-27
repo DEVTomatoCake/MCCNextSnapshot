@@ -20,7 +20,7 @@ async function generate() {
 	versions = versions.filter(ver => new Date(ver.releaseTime).getTime() > filterDate)
 	const bugs = require("./bugs.json")
 
-	let csv = "Name,Type,Date,Snapshots in the last three weeks,Days of year,Hours since last snapshot,Bugs fixed,Day of week\n"
+	let csv = "Name,Type,Date,Snapshots in the last three weeks,Day of year,Hours since last snapshot,Bugs fixed,Day of week\n"
 	versions.forEach((ver, i) => {
 		if (!versions[i + 1]) return
 		const time = new Date(ver.releaseTime)
@@ -45,12 +45,16 @@ async function generate() {
 
 		const nextTimeZero = new Date(nextTime.getFullYear(), nextTime.getMonth(), nextTime.getDate()).getTime()
 		const nextISO = nextTime.toISOString()
-		for (let k = new Date(time.getFullYear(), time.getMonth(), time.getDate() - 1, 16).getTime(); k > nextTimeZero && new Date(k).toISOString().substring(0, 10) != nextISO.substring(0, 10); k -= 1000 * 60 * 60 * 24) {
+		for (
+			let k = new Date(time.getFullYear(), time.getMonth(), time.getDate() - 1, 16).getTime();
+			k > nextTimeZero && new Date(k).toISOString().substring(0, 10) != nextISO.substring(0, 10);
+			k -= 1000 * 60 * 60 * 24
+		) {
 			const fakeTime = new Date(k)
 
 			let inRowFake = 0
 			for (let j = i + 1; j < versions.length; j++) {
-				if (new Date(versions[j].releaseTime).getTime() > fakeTime.getTime() - 1000 * 60 * 60 * 24 * 7 * 3) inRowFake++
+				if (new Date(versions[j].releaseTime).getTime() > k - 1000 * 60 * 60 * 24 * 7 * 3) inRowFake++
 				else break
 			}
 

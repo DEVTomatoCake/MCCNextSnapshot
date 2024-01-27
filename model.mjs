@@ -46,7 +46,7 @@ fs.createReadStream("mcVersions.csv")
 			(parseInt(item["Day of week"]) - lowestDay) / (highestDay - lowestDay)
 		])
 
-		net.train(prepareData(trainSet.map(normalize), trainSet.map(item => [item.Name == "-1000" ? 0 : 1])), {
+		net.train(prepareData(trainSet.map(normalize), trainSet.map(item => [item.Name == "" ? 0 : 1])), {
 			log: true,
 			logPeriod: 1000,
 			timeout: 1000 * 60 * 2,
@@ -55,18 +55,17 @@ fs.createReadStream("mcVersions.csv")
 			learningRate: 0.35
 		})
 
-		const stats = net.test(prepareData(testSet.map(normalize), testSet.map(item => [item.Name == "-1000" ? 0 : 1])))
+		const stats = net.test(prepareData(testSet.map(normalize), testSet.map(item => [item.Name == "" ? 0 : 1])))
 		console.log(stats)
 
-		const lastThreeWeeks = results.filter(item => item.Name != "-1000" && new Date(item.Date).getTime() > Date.now() - 1000 * 60 * 60 * 24 * 7 * 3).length
+		const lastThreeWeeks = results.filter(item => item.Name != "" && new Date(item.Date).getTime() > Date.now() - 1000 * 60 * 60 * 24 * 7 * 3).length
 		const date = new Date()
-		const currentISO = date.toISOString().substring(0, 10)
 
 		const defaultValues = {
 			"Snapshots in the last three weeks": lastThreeWeeks,
 			"Day of year": date.getMonth() * 30 + date.getDate(),
 			"Hours since last snapshot": Math.abs(Math.round((new Date(mcVersions[0].releaseTime).getTime() - Date.now()) / 1000 / 60 / 60)),
-			"Bugs fixed": bugs.filter(bug => currentISO == bug).length,
+			"Bugs fixed": bugs.filter(bug => date.toISOString().substring(0, 10) == bug).length,
 			"Day of week": date.getDay() == 0 ? 7 : date.getDay()
 		}
 		const prediction = net.run(normalize(defaultValues))

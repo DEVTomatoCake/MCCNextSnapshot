@@ -49,11 +49,11 @@ fs.createReadStream("mcVersions.csv")
 
 			net.train(prepareData(trainSet.map(normalize), trainSet.map(item => [item.Name == "" ? 0 : 1])), {
 				log: true,
-				logPeriod: 2000,
-				timeout: 1000 * 60 * 2,
+				logPeriod: 2500,
+				timeout: 1000 * 60,
 				iterations: 35000,
 				errorThresh: 0.008,
-				learningRate: 0.35
+				learningRate: 0.3
 			})
 
 			const stats = net.test(prepareData(testSet.map(normalize), testSet.map(item => [item.Name == "" ? 0 : 1])))

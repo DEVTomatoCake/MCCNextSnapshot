@@ -10,7 +10,7 @@
     "csv-parser": "^3.0.0"
   },
   "devDependencies": {
-    "@html-eslint/eslint-plugin": "^0.24.0",
+    "@html-eslint/eslint-plugin": "^0.24.1",
     "@html-eslint/parser": "^0.24.1",
     "@stylistic/eslint-plugin-js": "^1.7.0",
     "eslint": "^8.57.0",

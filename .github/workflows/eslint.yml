@@ -1,7 +1,6 @@
 name: ESLint
 
 on:
-  pull_request:
   push:
 
 jobs:
@@ -22,4 +21,4 @@ jobs:
         run: npm i --omit=optional --include=dev --no-fund --progress=false
 
       - name: "🔍 lint code"
-        run: npx eslint . --report-unused-disable-directives
+        run: npx eslint .

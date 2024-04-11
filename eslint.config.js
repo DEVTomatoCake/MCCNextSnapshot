@@ -4,13 +4,22 @@ const unicorn = require("eslint-plugin-unicorn")
 const sonarjs = require("eslint-plugin-sonarjs")
 const stylistic = require("@stylistic/eslint-plugin-js")
 const htmlESLint = require("@html-eslint/eslint-plugin")
-//const html = require("eslint-plugin-html")
+const html = require("eslint-plugin-html")
 
 const linterOptions = {
 	reportUnusedDisableDirectives: "error"
 }
 const global = {
-	...globals.browser
+	...globals.browser,
+
+	anonymous: "readonly",
+	normalize: "readonly",
+	defaultSnapshots: "readonly",
+	defaultYear: "readonly",
+	defaultSinceLast: "readonly",
+	defaultBugfixes: "readonly",
+	defaultDay: "readonly",
+	lastBuild: "readonly"
 }
 
 const rules = {
@@ -256,8 +265,8 @@ module.exports = [
 			unicorn,
 			sonarjs,
 			"@stylistic/js": stylistic,
-			"@html-eslint": htmlESLint//,
-			//html
+			"@html-eslint": htmlESLint,
+			html
 		},
 		settings: {
 			"html/html-extensions": [".html"]

@@ -76,6 +76,18 @@ fs.createReadStream("mcVersions.csv")
 			const prediction = net.run(normalize(defaultValues))
 			console.log("Current prediction for today: " + (prediction[0] * 100).toFixed(2) + "%")
 
+			const tomorrow = new Date(date)
+			tomorrow.setDate(tomorrow.getDate() + 1)
+			const tomorrowValues = {
+				"Snapshots in the last three weeks": results.filter(item => item.Name != "" && new Date(item.Date).getTime() > tomorrow.getTime() - 1000 * 60 * 60 * 24 * 7 * 3).length,
+				"Day of year": tomorrow.getMonth() * 30 + tomorrow.getDate(),
+				"Hours since last snapshot": Math.abs(Math.round((new Date(mcVersions[0].releaseTime).getTime() - tomorrow.getTime()) / 1000 / 60 / 60)),
+				"Bugs fixed": bugs.filter(bug => tomorrow.toISOString().substring(0, 10) == bug).length,
+				"Day of week": tomorrow.getDay() == 0 ? 7 : tomorrow.getDay()
+			}
+			const tomorrowPrediction = net.run(normalize(tomorrowValues))
+			console.log("Prediction for tomorrow: " + (tomorrowPrediction[0] * 100).toFixed(2) + "%")
+
 			fs.writeFileSync("./web/modelFunction.js",
 				net.toFunction().toString() +
 				"\n" +

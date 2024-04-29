@@ -8,8 +8,8 @@ const prepareData = (features, target) => {
 	return data
 }
 
-import mcVersions from "./mcVersions.json" assert { type: "json" }
-import bugs from "./bugs.json" assert { type: "json" }
+import mcVersions from "./mcVersions.json" with { type: "json" }
+import bugs from "./bugs.json" with { type: "json" }
 
 const results = []
 fs.createReadStream("mcVersions.csv")

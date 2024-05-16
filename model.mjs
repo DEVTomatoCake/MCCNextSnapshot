@@ -57,7 +57,7 @@ fs.createReadStream("mcVersions.csv")
 			})
 
 			const stats = net.test(prepareData(testSet.map(normalize), testSet.map(item => [item.Name == "" ? 0 : 1])))
-			if (stats.accuracy < 0.875) {
+			if (stats.accuracy < 0.885) {
 				console.log(stats.accuracy + " accuracy is not enough, retraining...")
 				return trainModel()
 			}

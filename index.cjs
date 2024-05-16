@@ -1,10 +1,7 @@
 const fs = require("node:fs")
 const fsPromises = require("node:fs").promises
 
-const fancyStats = process.argv[2] == "fancy"
-const precision = fancyStats ? 0 : 4
-
-async function generate() {
+async function generate(precision = 4) {
 	let versions = {}
 	if (fs.existsSync("./mcVersions.json")) versions = require("./mcVersions.json")
 	else {
@@ -77,6 +74,11 @@ async function generate() {
 		generateFake(nextTime.getTime(), new Date(nextTime.getFullYear(), nextTime.getMonth(), nextTime.getDate()).getTime(), nextTime.toISOString(), time, i)
 	})
 
-	fsPromises.writeFile("./" + (fancyStats ? "fancyStats" : "mcVersions") + ".csv", csv)
+	return csv
 }
-generate()
+
+const main = async () => {
+	fsPromises.writeFile("./mcVersions.csv", await generate())
+	fsPromises.writeFile("./fancyStats.csv", await generate(0))
+}
+main()

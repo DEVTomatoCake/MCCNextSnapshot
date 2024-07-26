@@ -12,7 +12,7 @@ async function generate(precision = 4) {
 			type: ver.type,
 			releaseTime: ver.releaseTime
 		}))
-		fsPromises.writeFile("./mcVersions.json", JSON.stringify(versions))
+		await fsPromises.writeFile("./mcVersions.json", JSON.stringify(versions))
 		console.log("Downloaded Minecraft version manifest")
 	}
 
